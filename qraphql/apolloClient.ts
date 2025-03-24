@@ -14,7 +14,8 @@ export const getBaseURL = () => {
   // Fallback to hardcoded domains in order of preference
   const productionDomains = [
     "https://assistly-psi.vercel.app",
-    "https://assistly-75sl4u0k3-shimaa95s-projects.vercel.app"
+    "https://assistly-75sl4u0k3-shimaa95s-projects.vercel.app",
+    
   ];
   
   // Return the first domain (primary production domain)
