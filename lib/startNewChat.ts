@@ -1,7 +1,7 @@
 import { graphqlMutation } from "@/lib/graphql-client";
 import { Insert_Guests, InsertChatSession, InsertMessage } from "@/qraphql/mutations/mutations";
 
-async function startNewChat(guestName:string,guestEmail:string,chatbotId:number){
+async function startNewChat(guestName:string,guestEmail:string,chatbotId:number): Promise<number>{
 
     try {
 
@@ -48,6 +48,7 @@ async function startNewChat(guestName:string,guestEmail:string,chatbotId:number)
         return chatSessionId;
     } catch (error) {
         console.error("Error starting new chat session:", error);
+        throw error;
     }
 }
 export default startNewChat;
