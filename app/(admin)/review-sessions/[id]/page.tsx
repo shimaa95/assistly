@@ -1,7 +1,7 @@
 import Messages from "@/components/ui/Messages"
-import serverClient from "@/lib/server/serverClient"
+import { executeGraphQL } from "@/lib/server/serverClient"
 import { GET_CHAT_SESSIONS_MESSAGES } from "@/qraphql/queries/queries"
-import { GetChatSessionsMessagesResponse, GetChatSessionsMessagesResponseVariables } from "@/types/types"
+import { GetChatSessionsMessagesResponse } from "@/types/types"
 import { use } from "react"
 
 export const dynamic  ='force-dynamic'
@@ -10,8 +10,12 @@ async function page(props: { params: Promise<{ id: string }> }) {
   const params = use(props.params)
   const { id } = params
  
-    const { data:{
-      
+    const data = await executeGraphQL<GetChatSessionsMessagesResponse>(
+      GET_CHAT_SESSIONS_MESSAGES,
+      { id: parseInt(id) }
+    )
+    
+    const {
       chat_sessions:{
       id:chatSessionId,
       created_at,
@@ -19,10 +23,7 @@ async function page(props: { params: Promise<{ id: string }> }) {
       chatbots:{ name },
       guests:{ name: guestName, email },
       }
-    },} = await serverClient.query<GetChatSessionsMessagesResponse,GetChatSessionsMessagesResponseVariables>({
-query: GET_CHAT_SESSIONS_MESSAGES,
-      variables: { id: parseInt(id) }
-    })
+    } = data
   return (
     <div className="flex-1 p-10 pb-24">
       <h1 className="text-xl lg:text-3xl font-semibold">Sessions Review</h1>
