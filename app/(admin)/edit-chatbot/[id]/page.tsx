@@ -3,7 +3,7 @@
 import React, { FormEvent, use, useEffect, useState } from 'react'
 import Link from 'next/link' 
 import { Input } from '@/components/ui/input'
-import { BASE_URL } from '@/qraphql/apolloClient';
+import { getBaseURL } from '@/qraphql/apolloClient';
 import { Button } from '@/components/ui/button';
 import { Copy } from 'lucide-react';
 import { toast } from "sonner"
@@ -49,7 +49,7 @@ useEffect(()=>{
 },[data])
 
 useEffect(()=>{
-  const url=`${BASE_URL}/chatbot/${id}`
+  const url=`${getBaseURL()}/chatbot/${id}`
 setUrl(url)
 },[id])
 
