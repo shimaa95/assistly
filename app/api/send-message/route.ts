@@ -1,4 +1,4 @@
-import serverClient from "@/lib/server/serverClient"
+import { executeGraphQL } from "@/lib/server/serverClient"
 import { InsertMessage } from "@/qraphql/mutations/mutations"
 import { GET_CHATBOTS_by_ID, GET_MESSEGES_BY_CHAT_SESSION_ID } from "@/qraphql/queries/queries"
 import type { GetChatbotByIdResponse, Message, MessagesbyChatSessionIdResponse } from "@/types/types"
@@ -13,11 +13,8 @@ export async function POST(req: NextRequest) {
 
   try {
     // Fetch chatbot characteristics
-    const { data } = await serverClient.query<GetChatbotByIdResponse>({
-      query: GET_CHATBOTS_by_ID,
-      variables: {
-        id: chabot_id,
-      },
+    const data = await executeGraphQL<GetChatbotByIdResponse>(GET_CHATBOTS_by_ID, {
+      id: chabot_id,
     })
     const chatbot = data.chatbots
     if (!chatbot) {
@@ -25,13 +22,12 @@ export async function POST(req: NextRequest) {
     }
 
     // Fetch previous messages
-    const { data: messagesData } = await serverClient.query<MessagesbyChatSessionIdResponse>({
-      query: GET_MESSEGES_BY_CHAT_SESSION_ID,
-      variables: {
+    const messagesData = await executeGraphQL<MessagesbyChatSessionIdResponse>(
+      GET_MESSEGES_BY_CHAT_SESSION_ID,
+      {
         chat_session_id,
-        fetchPolicy: "no-cache",
-      },
-    })
+      }
+    )
     const chatSession = messagesData.chat_sessions as any
     const previousMessages = chatSession.messages
 
@@ -103,29 +99,23 @@ export async function POST(req: NextRequest) {
     }
 
     // Store user message first
-    await serverClient.mutate({
-      mutation: InsertMessage,
-      variables: {
-        chat_session_id,
-        content,
-        created_at,
-        sender: "user",
-      },
+    await executeGraphQL(InsertMessage, {
+      chat_session_id,
+      content,
+      created_at,
+      sender: "user",
     })
 
-    const aiMessage = await serverClient.mutate({
-      mutation: InsertMessage,
-      variables: {
-        chat_session_id,
-        content: aiResponse,
-        created_at: new Date().toISOString(),
-        sender: "ai",
-      },
+    const aiMessage = await executeGraphQL<{insertMessages: {id: number}}>(InsertMessage, {
+      chat_session_id,
+      content: aiResponse,
+      created_at: new Date().toISOString(),
+      sender: "ai",
     })
 
     return NextResponse.json(
       {
-        id: aiMessage.data.insertMessages.id,
+        id: aiMessage.insertMessages.id,
         content: aiResponse,
       },
       { status: 200 },

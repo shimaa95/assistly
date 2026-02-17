@@ -2,7 +2,7 @@ import Avatar from "@/components/ui/Avatar"
 import { Button } from "@/components/ui/button"
 
 import { GET_CHATBOTS_by_USER,GET_USER_CHATBOTS } from "@/qraphql/queries/queries"
-import serverClient from '@/lib/server/serverClient'
+import { executeGraphQL } from '@/lib/server/serverClient'
 import { Chatbot, ChatbotData,ChatSession } from "@/types/types"
 import { auth } from "@clerk/nextjs/server"
 import Link from "next/link"
@@ -14,12 +14,7 @@ async function ViewChatbots () {
 if(!userId) return;
 
 
-const {data} = await serverClient.query<ChatbotData>({
-    query: GET_CHATBOTS_by_USER,
-     
-})
-
-
+const data = await executeGraphQL<ChatbotData>(GET_CHATBOTS_by_USER)
 
 const chatbotsByUser : Chatbot[] = data.chatbotsList
 

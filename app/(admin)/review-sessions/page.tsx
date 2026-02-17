@@ -1,5 +1,5 @@
 import ChatbotSessions from '@/components/ui/ChatbotSessions';
-import serverClient from '@/lib/server/serverClient';
+import { executeGraphQL } from '@/lib/server/serverClient';
 import { GET_USER_CHATBOTS } from '@/qraphql/queries/queries';
 import { Chatbot, ChatbotData } from '@/types/types';
 import { auth } from '@clerk/nextjs/server';
@@ -9,10 +9,7 @@ async function ReviewSessions() {
   const {userId} = await auth()
   if(!userId) return;
 
-const {data} = await serverClient.query<ChatbotData>({
-  query:GET_USER_CHATBOTS,
- 
-})
+const data = await executeGraphQL<ChatbotData>(GET_USER_CHATBOTS)
 
 const chatbotsByUser :Chatbot[] = data.chatbotsList
 

@@ -65,10 +65,8 @@ const handleUpdateChatbot = async (e:FormEvent<HTMLFormElement>) => {
   e.preventDefault();
   try {
     const promise = updateChatbot({
-      variables: {
-        id,
-        name:chatbotName,
-      },
+      id,
+      name:chatbotName,
     })
     toast.promise(promise,{
 loading:'Updating...',
@@ -85,9 +83,7 @@ const isConfirmed= window.confirm('Are you sure you want to delete this chatbot?
 if(isConfirmed)
   try {
     const promise = deleteChatbot({
-      variables: {
-        id: id,
-      },
+      id: id,
     })
     toast.promise(promise,{
 loading:'Deleting...',
@@ -105,11 +101,9 @@ error:'Failed to delete chatbot',
 const handleAddCharacteristic = async (content:string)=>{
   try {
     const promise = addCharacteristic({
-    variables: {
       chatbotId:Number(id),
       content,
       created_at:new Date(),
-    },
     })
     toast.promise(promise,{
   loading:'Adding...',
