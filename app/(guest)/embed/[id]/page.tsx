@@ -15,8 +15,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import startNewChat from "@/lib/startNewChat";
 import Avatar from "@/components/ui/Avatar";
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@tanstack/react-query";
 import { GET_CHATBOTS_by_ID, GET_MESSEGES_BY_CHAT_SESSION_ID } from "@/qraphql/queries/queries";
+import { graphqlQuery } from "@/lib/graphql-client";
 import Messages from "@/components/ui/Messages";
 import {z} from "zod";
 import {  useForm } from "react-hook-form";
@@ -56,25 +57,18 @@ setOpen(false);
    
   }
 
-  const {data:chatBotData} = useQuery <GetChatbotByIdResponse>(
-    GET_CHATBOTS_by_ID,
-    {
-    variables:{
-     id
-    }}
-  )
+  const {data:chatBotData} = useQuery<GetChatbotByIdResponse>({
+    queryKey: ['chatbot', id],
+    queryFn: () => graphqlQuery<GetChatbotByIdResponse>(GET_CHATBOTS_by_ID, {id: Number(id)}),
+  })
 
-  const {loading:loadingQuery,error,data}=
-  useQuery<MessagesbyChatSessionIdResponse,MessagesbyChatSessionIdResponseVariables>
-  (
-GET_MESSEGES_BY_CHAT_SESSION_ID,
-{
-  variables:{
-    chat_session_id:chatId
-
-  },
-  skip:!chatId
-} )
+  const {isLoading:loadingQuery,error,data}=
+  useQuery<MessagesbyChatSessionIdResponse>({
+    queryKey: ['messages', chatId],
+    queryFn: () => graphqlQuery<MessagesbyChatSessionIdResponse>(GET_MESSEGES_BY_CHAT_SESSION_ID, {chat_session_id: chatId}),
+    enabled: !!chatId,
+    refetchInterval: 2000,
+  })
 
 
 useEffect(() => {

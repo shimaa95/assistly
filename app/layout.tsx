@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import ApolloProviderWrapper from "@/components/ui/ApolloProvider";
+import QueryProvider from "@/lib/queryClient";
 import { Toaster } from "@/components/ui/sonner"
 
 
@@ -15,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ApolloProviderWrapper> 
+    <QueryProvider> 
     <html lang="en">
       <body
       className="min-h-screen flex"    
@@ -24,6 +24,6 @@ export default function RootLayout({
         <Toaster  position="bottom-center" />
       </body>
     </html>
-    </ApolloProviderWrapper>
+    </QueryProvider>
   );
 }
