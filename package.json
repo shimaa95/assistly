@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@apollo/client": "^3.13.4",
+    "@tanstack/react-query": "^5.62.16",
     "@clerk/nextjs": "^6.12.2",
     "@dicebear/collection": "^9.2.2",
     "@dicebear/core": "^9.2.2",

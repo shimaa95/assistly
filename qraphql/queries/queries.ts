@@ -1,6 +1,4 @@
-import { gql } from "@apollo/client";
-
-export const GET_USER_CHATBOTS = gql`
+export const GET_USER_CHATBOTS = `
  query getAllChatbots {
   chatbotsList {
     id
@@ -23,7 +21,7 @@ export const GET_USER_CHATBOTS = gql`
 
 
 
-export const GET_CHATBOTS_by_ID = gql`
+export const GET_CHATBOTS_by_ID = `
   query GETCHATBOTSBYID($id: Int!) 
   {
   chatbots(id: $id) {
@@ -50,7 +48,7 @@ export const GET_CHATBOTS_by_ID = gql`
   }
 }   
 `
-export const GET_CHATBOTS_by_USER = gql`
+export const GET_CHATBOTS_by_USER = `
 query getAllChatbots {
   chatbotsList {
     id
@@ -87,7 +85,7 @@ query getAllChatbots {
   }
 }
  ` 
- export const GET_CHAT_SESSIONS_MESSAGES = gql`
+ export const GET_CHAT_SESSIONS_MESSAGES = `
    query getChatSessionsMessages($id:Int!){
    chat_sessions(id: $id) {
     created_at
@@ -109,7 +107,7 @@ query getAllChatbots {
   
    }
  `
-export  const GET_MESSEGES_BY_CHAT_SESSION_ID= gql`
+export  const GET_MESSEGES_BY_CHAT_SESSION_ID= `
  query GetMessagesByChatSessionId($chat_session_id:Int!) {
  chat_sessions(id: $chat_session_id) {
   created_at

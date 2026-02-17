@@ -1,6 +1,4 @@
-import { gql } from '@apollo/client';
-
-export const CREATE_CHATBOT= gql`
+export const CREATE_CHATBOT= `
 mutation CreateChatbot($clerk_user_id: String!, $name: String!,$created_at: DateTime!) { 
   insertChatbots(clerk_user_id: $clerk_user_id, name: $name, created_at: $created_at) {
     id
@@ -10,20 +8,20 @@ mutation CreateChatbot($clerk_user_id: String!, $name: String!,$created_at: Date
 }
 
   `;
-export const REMOVE_CHARACTERISTIC= gql`
+export const REMOVE_CHARACTERISTIC= `
 mutation RemoveCharacteristic($Id: Int!) {
      deleteChatbot_characteristics(id: $Id) {
 id
 }
 }
 `;
-export const DELETE_CHATBOT= gql`
+export const DELETE_CHATBOT= `
 mutation DeleteChatbots($id: Int!) {
   deleteChatbots(id: $id) {
 id
 }
 }`;
-export const ADD_CHARACTERISTIC= gql`
+export const ADD_CHARACTERISTIC= `
 mutation AddCharacteristic($chatbotId: Int!, $content: String!,$created_at: DateTime!) {
   insertChatbot_characteristics(chatbot_id: $chatbotId, content: $content, created_at: $created_at) {
    chatbot_id
@@ -32,7 +30,7 @@ mutation AddCharacteristic($chatbotId: Int!, $content: String!,$created_at: Date
   }
 }`;
 
-export const UPDATE_CHATBOT= gql`
+export const UPDATE_CHATBOT= `
 mutation UpdateChatbot($id: Int!, $name: String!) {
   updateChatbots(id: $id, name: $name) {
     id
@@ -41,7 +39,7 @@ mutation UpdateChatbot($id: Int!, $name: String!) {
   }
 }`;
 
-export const InsertMessage= gql`
+export const InsertMessage= `
 mutation insertMessages($chat_session_id: Int!, $content: String!, $created_at: DateTime!, $sender
 : String!) {
  insertMessages(chat_session_id: $chat_session_id,content: $content, created_at: $created_at, sender: $sender) {
@@ -53,7 +51,7 @@ mutation insertMessages($chat_session_id: Int!, $content: String!, $created_at: 
 }
 `;
 
-export const InsertChatSession= gql`
+export const InsertChatSession= `
 mutation insertChatSession($chatbot_id: Int!, $guest_id: Int!, $created_at: DateTime!) {
   insertChat_sessions( chatbot_id: $chatbot_id, guest_id: $guest_id,created_at: $created_at) {
 id

@@ -1,5 +1,4 @@
-import serverClient from '@/lib/server/serverClient';
-import { gql } from '@apollo/client';
+import { executeGraphQL } from '@/lib/server/serverClient';
 import { NextRequest, NextResponse } from 'next/server'
 
 
@@ -16,17 +15,7 @@ export async function POST(request: NextRequest) {
 
 
   try {
-    let result
-    // if(query.trim().startsWith('mutation')){
-      result= await serverClient.mutate({
-        mutation: gql`
-        ${query}
-         `,
-        variables,
-      })
-
-
-    const data = result.data;
+    const data = await executeGraphQL(query, variables);
     return NextResponse.json({ data },{headers:corsHeaders});
   } catch (error) {
     console.log('error',error)

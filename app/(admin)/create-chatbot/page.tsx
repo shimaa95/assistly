@@ -3,11 +3,12 @@
 import { Button } from "@/components/ui/button"
 import Avatar from "../../../components/ui/Avatar"
 import { Input } from "@/components/ui/input"
-import { useMutation } from "@apollo/client"
+import { useMutation } from "@tanstack/react-query"
 import { useUser } from "@clerk/nextjs"
 import { CREATE_CHATBOT } from "../../../qraphql/mutations/mutations"
  import { FormEvent, useState } from "react"
 import { useRouter } from "next/navigation"
+import { graphqlMutation } from "@/lib/graphql-client"
 
 function CreateChatbot() {
   const {user}=useUser();
@@ -15,21 +16,22 @@ function CreateChatbot() {
 
   const router=useRouter();
 
-  const [createChatbot, {data, loading, error}]=useMutation(CREATE_CHATBOT,{
-variables:{ 
-clerk_user_id:user?.id,
-name,
-created_at: new Date(),
-},
+  const {mutateAsync: createChatbot, isPending: loading}=useMutation({
+    mutationFn: (variables: { clerk_user_id: string; name: string; created_at: Date }) => 
+      graphqlMutation(CREATE_CHATBOT, variables)
   })
 
   const handleSubmit= async (e:FormEvent) => {
     e.preventDefault();
 try {
 
-  const data  = await createChatbot();
+  const data  = await createChatbot({
+    clerk_user_id: user?.id || '',
+    name,
+    created_at: new Date(),
+  });
   setName('');
-  router.push(`/edit-chatbot/${data.data.insertChatbots.id}`)
+  router.push(`/edit-chatbot/${data.insertChatbots.id}`)
   
 } catch (err) {
   console.error(err)

@@ -3,17 +3,18 @@
 import React, { FormEvent, use, useEffect, useState } from 'react'
 import Link from 'next/link' 
 import { Input } from '@/components/ui/input'
-import { getBaseURL } from '@/qraphql/apolloClient';
+import { getBaseURL } from '@/lib/graphql-client';
 import { Button } from '@/components/ui/button';
 import { Copy } from 'lucide-react';
 import { toast } from "sonner"
 import Avatar from '@/components/ui/Avatar';
-import {  useMutation, useQuery } from '@apollo/client';
+import {  useMutation, useQuery } from '@tanstack/react-query';
 import { GET_CHATBOTS_by_ID } from '@/qraphql/queries/queries';
 import { GetChatbotByIdResponse, GetChatbotByIdResponseVariables } from '@/types/types';
 import { ADD_CHARACTERISTIC, DELETE_CHATBOT, UPDATE_CHATBOT } from '@/qraphql/mutations/mutations';
 import { redirect } from 'next/navigation';
 import Characteristics from '@/components/ui/Characteristics';
+import { graphqlMutation, graphqlQuery } from '@/lib/graphql-client';
 
 
 function page(props: { params: Promise<{ id: string }> }) {
@@ -22,25 +23,32 @@ function page(props: { params: Promise<{ id: string }> }) {
   const [url,setUrl]=useState<string>('');
 const [chatbotName,setChatbotName]=useState<string>('');
 const [newCharacteristic,setNewCharacteristic]=useState<string>('');
-const [deleteChatbot]=useMutation(DELETE_CHATBOT,{
-  refetchQueries: ["GETCHATBOTSBYID"],
-  awaitRefetchQueries: true,
+const {mutateAsync: deleteChatbot}=useMutation({
+  mutationFn: (variables: { id: string }) => graphqlMutation(DELETE_CHATBOT, variables),
+  onSuccess: () => {
+    refetch()
+  }
 })
-const [updateChatbot]=useMutation(UPDATE_CHATBOT,
-  {
-    refetchQueries:["GETCHATBOTSBYID"]
-  
-  })
 
-const [addCharacteristic]= useMutation(ADD_CHARACTERISTIC,
-  {
-    refetchQueries:["GETCHATBOTSBYID"]
-  
-  })
+const {mutateAsync: updateChatbot}=useMutation({
+  mutationFn: (variables: { id: string; name: string }) => graphqlMutation(UPDATE_CHATBOT, variables),
+  onSuccess: () => {
+    refetch()
+  }
+})
 
-const {data,loading,error}= useQuery<GetChatbotByIdResponse,GetChatbotByIdResponseVariables>(
-  GET_CHATBOTS_by_ID,
-  {    variables:{id}})
+const {mutateAsync: addCharacteristic}= useMutation({
+  mutationFn: (variables: { chatbotId: number; content: string; created_at: Date }) => 
+    graphqlMutation(ADD_CHARACTERISTIC, variables),
+  onSuccess: () => {
+    refetch()
+  }
+})
+
+const {data, isLoading: loading, error, refetch}= useQuery<GetChatbotByIdResponse>({
+  queryKey: ['chatbot', id],
+  queryFn: () => graphqlQuery<GetChatbotByIdResponse>(GET_CHATBOTS_by_ID, {id: Number(id)}),
+})
 
 useEffect(()=>{
   if(data){
@@ -121,7 +129,7 @@ if(loading)
   <Avatar seed='papafam support Agent'/>
 </div>)
 
-if(error) return <p>Error: {error.message}</p>
+if(error) return <p>Error: {(error as Error).message}</p>
 
 if(!data?.chatbots) return redirect('/view-chatbots');
 
